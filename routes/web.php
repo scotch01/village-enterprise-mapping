@@ -22,6 +22,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::middleware('role:pengisi')->group(function () {
+        Route::get('/dashboard-pengisi', function () {
+            return 'Dashboard Pengisi';
+        });
+    });
+
+    Route::middleware('role:pengawas')->group(function () {
+        Route::get('/dashboard-pengawas', function () {
+            return 'Dashboard Pengawas';
+        });
+    });
 });
 
 require __DIR__.'/auth.php';
