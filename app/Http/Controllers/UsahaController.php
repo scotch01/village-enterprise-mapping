@@ -36,6 +36,7 @@ class UsahaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            // Blok I
             'nama_usaha' => 'required|string|max:255',
             'alamat' => 'required|string',
 
@@ -55,6 +56,21 @@ class UsahaController extends Controller
                 in_array($request->input('jawaban.I.110a'), ['2','3'])
             ),
             'jawaban.I.110c' => 'required|in:1,2,3,4',
+
+            // Blok II
+            'jawaban.II.201a' => 'required|string|max:255',
+            'jawaban.II.201b' => 'required|digits:16',
+            'jawaban.II.201c' => 'required|in:1,2',
+            'jawaban.II.201d' => 'required|integer|min:0|max:120',
+            'jawaban.II.201e' => 'nullable|string|max:20',
+            'jawaban.II.201f' => 'required|in:1,2,3,4,5,6,7,8,9',
+
+            'jawaban.II.202' => 'required|in:1,2',
+
+            'jawaban.II.203a' => 'required|in:1,2',
+            'jawaban.II.203b' => Rule::requiredIf(
+                $request->input('jawaban.II.203a') == '1'
+            ),
         ]);
 
         $user = auth()->user();
@@ -105,6 +121,27 @@ class UsahaController extends Controller
                     'value' => $value,
                 ]);
             }
+
+            $jawabanII = Jawaban::create([
+                'usaha_id' => $usaha->id,
+                'blok' => 'II'
+            ]);
+
+            $dataII = $request->input('jawaban.II');
+
+            // skip logic
+            if ($request->input('jawaban.II.203a') != '1') {
+                $dataII['203b'] = null;
+            }
+
+            foreach ($dataII as $kode => $value) {
+                JawabanDetail::create([
+                    'jawaban_id' => $jawabanII->id,
+                    'kode_pertanyaan' => $kode,
+                    'value' => $value,
+                ]);
+            }
+            
         });
 
         return redirect('/dashboard-pengisi');
