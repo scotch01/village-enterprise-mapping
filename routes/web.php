@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\UsahaController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -34,6 +35,9 @@ Route::middleware('auth')->group(function () {
             return 'Dashboard Pengawas';
         });
     });
+
+    Route::get('/usaha/create', [UsahaController::class, 'create'])->middleware('auth');
+    Route::post('/usaha', [UsahaController::class, 'store'])->middleware('auth');
 });
 
 require __DIR__.'/auth.php';
